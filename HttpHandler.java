@@ -35,9 +35,7 @@ public class HttpHandler implements Runnable {
         }
     }
 
-    /**
-     * @throws Exception
-     */
+
     private void handleRequest() throws Exception {
         InputStream input;
         OutputStream output;
@@ -53,12 +51,6 @@ public class HttpHandler implements Runnable {
         socket.close();
     }
 
-    /**
-     * @param input
-     * @param output
-     * @param root
-     * @throws Exception
-     */
     private void serverRequest(InputStream input, OutputStream output, String root) throws Exception {
         String line;
         File resource = new File(directory+ "/Test.txt");
@@ -80,30 +72,21 @@ public class HttpHandler implements Runnable {
             }
             StringBuilder body = new StringBuilder();
             if (isPost) {
-                int c = 0;
+                int c;
                 for (int i = 0; i < contentLength; i++) {
                     c = bf.read();
                     body.append((char) c);
 
                 }
             }
-            writeToTempDir(resource,body.toString());
-                  // send response
+            Files.writeString(resource.toPath(), body.toString(), StandardCharsets.UTF_8);
             populateResponse(resource,output);
             output.flush();
             break;
         }
     }
 
-    private void writeToTempDir(File resource, String toString) {
-        
-    }
 
-    /**
-     * @param resource
-     * @param output
-     * @throws IOException
-     */
     private void populateResponse(File resource, OutputStream output) throws IOException {
         SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z");
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -113,10 +96,8 @@ public class HttpHandler implements Runnable {
         String DATE = "Date: " + format.format(new java.util.Date()) + "\n";
         String CONTENT_TYPE = "Content-type: " + URLConnection.guessContentTypeFromName(resource.getName());
         String LENGTH = "Content-Length: " + (resource.length()) + "\n\n";
-
         String header = REQ_FOUND + SERVER + DATE + CONTENT_TYPE + LENGTH;
         output.write(header.getBytes());
-
         Files.copy(Paths.get(resource.toString()), output);
         output.flush();
     }

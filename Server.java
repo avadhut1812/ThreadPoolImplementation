@@ -1,14 +1,9 @@
 package ThreadPoolImpl;
 
-import ThreadPoolImpl.HttpHandler;
-
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,8 +11,8 @@ public class Server {
 
     private ServerSocket serverSocket;
     File directory;
-    protected ExecutorService threadPool =
-            Executors.newFixedThreadPool(10);
+    private CustomThreadPool threadPool =
+            new CustomThreadPool(10);
 
     public static void main(String[] args) {
         try {
